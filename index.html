@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tables</title>
+        <link rel="stylesheet" href="/css/common.css" />
+        <script src="/js/skel.min.js"></script>
+        <script>
+            skel.init({
+                reset: 'full',
+                breakpoints: {
+                    large: {
+                        media: '(min-width: 1025px) and (max-width: 1280px)',
+                        containers: 960
+                    },
+                    medium: {
+                        media: '(min-width: 568px) and (max-width: 1024px)',
+                        containers: '90%'
+                    },
+                    small: {
+                        media: '(max-width: 567px)',
+                        containers: '95%!',
+                        grid: {
+                            collapse: true
+                        }
+                    },
+                    xsmall: {
+                        media: '(max-width: 320px)'
+                    }
+                }
+            });
+        </script>    
+</head>
+<body>
+
+<div id="main" class="container">
+
+    <header id="header">
+        <h1>Tables</h1>
+    </header>
+
+    % for num in range(1, 22):
+    <div class="row">
+        <a align="center" class="12u" href="/{{ num }}">
+            Table number {{ num }}
+        </a>
+    </div>
+    % end
+
+</div>
+</body>
+</html>

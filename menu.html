@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html ng-app="FoodOrdering">
+<head>
+    <title>Food Ordering</title>
+    <script type="text/javascript" ng:autobind
+            src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+    <script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+    <script src="https://cdn.firebase.com/libs/angularfire/1.1.1/angularfire.min.js"></script>
+
+    <script type="text/javascript">
+        var myApp = angular.module('FoodOrdering', ["firebase"]);
+        
+
+        myApp.controller('MyController', ['$scope', '$firebaseObject', function($scope, $firebaseObject) {
+            var ref = new Firebase('https://YOUR_FIREBASE_ID.firebaseio.com/');
+            var syncObject = $firebaseObject(ref);
+            $scope.tableNum = window.location.pathname;
+            var orderData = $firebaseObject(ref.child('food_orders').child($scope.tableNum));
+            orderData.$loaded().then(function() {
+                console.log("loaded record:", orderData.$id);
+            });
+            $scope.data = orderData;
+            orderData.$bindTo($scope, "data"); // pushes UI changes to fairebase w/o save()
+        }]);
+
+    </script>
+        <link rel="stylesheet" href="/css/common.css" />
+        <script src="/js/skel.min.js"></script>
+        <script>
+            skel.init({
+                reset: 'full',
+                breakpoints: {
+                    large: {
+                        media: '(min-width: 1025px) and (max-width: 1280px)',
+                        containers: 960
+                    },
+                    medium: {
+                        media: '(min-width: 568px) and (max-width: 1024px)',
+                        containers: '90%'
+                    },
+                    small: {
+                        media: '(max-width: 567px)',
+                        containers: '95%!',
+                        grid: {
+                            collapse: true
+                        }
+                    },
+                    xsmall: {
+                        media: '(max-width: 320px)'
+                    }
+                }
+            });
+        </script>    
+</head>
+<body ng-controller="MyController">
+
+
+<div id="main" class="container">
+
+    <header id="header">
+        <h1>Food Order for Table {{ table }}</h1>
+    </header>
+
+    % for section in menu["sections"]:
+    <div class="row">
+        <h2 align="center" class="12u">
+            {{ section["name"] }}
+        </h2>
+    </div>
+
+    % if "text" in section:
+    <div class="row">
+        <h3 align="center" class="12u">
+            {{ section["text"] }}
+        </h3>
+    </div>
+    % end
+
+    % for choice in section["choices"]:
+    <div class="row">
+        <label class="7u align-right">
+            {{ choice["desc"] }}
+        </label>
+        <div class="1u">
+        	${{ choice["price"] }}
+        </div>
+        <div class="1u">
+        	<input type="number" min="0" max="15" style="width: 3em;" ng-maxlength="2" ng-model="data.{{ choice["id"] }}"/>
+        </div>
+        <div class="1u">
+        	<button width="60" height="60" ng-show="data.{{ choice["id"] }} < 15 || data.{{ choice["id"] }} == null" ng-click="data.{{ choice["id"] }} = data.{{ choice["id"] }} +1">&#8593;</button>
+        </div>        
+        <div class="1u">
+        	<button width="60" height="60" ng-show="data.{{ choice["id"] }} > 0" ng-click="data.{{ choice["id"] }} = data.{{ choice["id"] }} -1">&#8595;</button>
+        </div>                
+    </div>
+    % end
+
+    % end
+
+</div>
+</body>
+</html>
